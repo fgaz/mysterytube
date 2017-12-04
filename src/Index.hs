@@ -12,7 +12,7 @@ indexPage = do
     title_ "MysteryTube"
     link_ [href_ "/static/normalize.css", rel_ "stylesheet", type_ "text/css"]
     link_ [href_ "/static/style.css", rel_ "stylesheet", type_ "text/css"]
-    script_ [src_ "/static/api.js"] ("" :: Text)
+    script_ [src_ "/gen/api.js"] ("" :: Text)
     script_ [src_ "/static/main.js"] ("" :: Text)
   body_ $ do
     main_ $ do

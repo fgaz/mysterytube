@@ -13,7 +13,6 @@ import Data.Aeson.Types
 import GHC.Generics
 import Network.Wai
 import Servant
-import Servant.JS
 import Data.Text as T
 import Data.Text.IO as T
 import Servant.HTML.Lucid
@@ -26,8 +25,8 @@ import Lucid (Html)
 import Index
 
 
-mtApp :: FilePath -> IORef Video -> Application
-mtApp staticPath ref = serve mtAPP $ mtAPPServer staticPath ref
+mtApp :: FilePath -> FilePath -> IORef Video -> Application
+mtApp staticDir tmpDir ref = serve mtAPP $ mtAPPServer staticDir tmpDir ref
 
 
 mtAPI :: Proxy MTAPI
@@ -49,15 +48,18 @@ type MTAPI = "watch" :> ReqBody '[JSON] Video :> Post '[JSON] Video
 
 type MTAPP = MTAPI
         :<|> "static" :> Raw
+        :<|> "gen" :> Raw
         :<|> Get '[HTML] (Html ())
 
 mtAPIServer :: IORef Video -> Server MTAPI
 mtAPIServer ref = getVideo ref
 
-mtAPPServer :: FilePath -> IORef Video -> Server MTAPP
-mtAPPServer staticPath ref = mtAPIServer ref
-                        :<|> serveDirectoryWebApp staticPath
-                        :<|> return indexPage
+mtAPPServer :: FilePath -> FilePath -> IORef Video -> Server MTAPP
+mtAPPServer staticDir tmpDir ref =
+       mtAPIServer ref
+  :<|> serveDirectoryWebApp staticDir
+  :<|> serveDirectoryWebApp tmpDir
+  :<|> return indexPage
 
 charAllowedInVideoId :: Char -> Bool
 charAllowedInVideoId char = elem char ("-_" :: String) || isDigit char || isAsciiUpper char || isAsciiLower char
@@ -72,11 +74,4 @@ getVideo :: IORef Video -> Video -> Handler Video
 getVideo ref newVid = if checkVideo newVid
   then liftIO $ atomicModifyIORef' ref (\oldVid -> (newVid, oldVid))
   else throwError err400
-
--- js --
-
--- FIXME use temp dir or put it in memory
-writeJSFiles :: FilePath -> IO ()
-writeJSFiles staticDir = --do
-  writeJSForAPI mtAPI vanillaJS $ staticDir </> "./api.js"
 

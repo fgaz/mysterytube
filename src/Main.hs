@@ -1,9 +1,11 @@
 module Main where
 
 import Network.Wai.Handler.Warp
+import Servant.JS
 import Data.IORef (newIORef)
 import System.Environment (lookupEnv)
 import System.FilePath ((</>))
+import System.IO.Temp (withSystemTempDirectory)
 import Data.Maybe (fromMaybe)
 import Data.String (fromString)
 
@@ -22,17 +24,27 @@ defaultVideoId :: String
 defaultVideoId = "dQw4w9WgXcQ"
 staticDirEnv :: String
 staticDirEnv = "MYSTERYTUBE_STATIC_DIR"
+tmpDirEnv :: String
+tmpDirEnv = "MYSTERYTUBE_TMP_DIR"
 
 main :: IO ()
-main = do
-  ref <- newIORef Video { videoId = defaultVideoId, videoTime = Nothing }
+main = withSystemTempDirectory "mysterytube-" $ \tmpDir -> do
   envPort <- lookupEnv portEnv
   envHost <- lookupEnv hostEnv
   let port = fromMaybe defaultPort $ read <$> envPort
   let host = fromString $ fromMaybe defaultHost envHost
-  envHost <- lookupEnv staticDirEnv
+
+  envStaticDir <- lookupEnv staticDirEnv
   staticDir <- (</>"static") <$> getDataDir
-  let staticDir' = fromMaybe staticDir envHost
-  writeJSFiles staticDir
-  runSettings (setPort port $ setHost host defaultSettings) $ mtApp staticDir' ref
+  let staticDir' = fromMaybe staticDir envStaticDir
+  envTmpDir <- lookupEnv tmpDirEnv
+  let tmpDir' = fromMaybe tmpDir envTmpDir
+
+  writeJSFiles tmpDir'
+  ref <- newIORef Video { videoId = defaultVideoId, videoTime = Nothing }
+  runSettings (setPort port $ setHost host defaultSettings) $ mtApp staticDir' tmpDir' ref
+
+writeJSFiles :: FilePath -> IO ()
+writeJSFiles staticDir = --do
+  writeJSForAPI mtAPI vanillaJS $ staticDir </> "./api.js"
 
