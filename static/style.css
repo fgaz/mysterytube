@@ -36,6 +36,7 @@ button{
   margin: 0.5em;
   border-radius: 2px;
   box-shadow: 0 0 12px 0 rgba(0,0,0,.5);
+  cursor: pointer;
 }
 button:hover{
   background-color: #e52d27;
@@ -82,5 +83,23 @@ h1{
 
 footer {
   text-align: center;
+}
+
+#explanation {
+  max-width:500px;
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+  border:1px solid #555;
+}
+
+#explanation > p {
+  margin: 1em;
+}
+
+#explanation-button {
+  vertical-align:text-top;
+  font-size: 0.7em;
+  cursor: pointer;
 }
 
