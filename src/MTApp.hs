@@ -18,6 +18,8 @@ import Data.Text.IO as T
 import Servant.HTML.Lucid
 import Data.Char (isDigit, isAsciiLower, isAsciiUpper)
 import System.FilePath ((</>))
+import System.Log.FastLogger (ToLogStr, toLogStr, TimedFastLogger)
+import Data.Monoid
 
 import Data.IORef
 
@@ -25,8 +27,8 @@ import Lucid (Html)
 import Index
 
 
-mtApp :: FilePath -> FilePath -> IORef Video -> Application
-mtApp staticDir tmpDir ref = serve mtAPP $ mtAPPServer staticDir tmpDir ref
+mtApp :: FilePath -> FilePath -> TimedFastLogger -> IORef Video -> Application
+mtApp staticDir tmpDir logger ref = serve mtAPP $ mtAPPServer staticDir tmpDir logger ref
 
 
 mtAPI :: Proxy MTAPI
@@ -44,6 +46,16 @@ data Video = Video { videoId :: String
 instance ToJSON Video
 instance FromJSON Video
 
+instance ToLogStr Video where
+  toLogStr (Video vid vtime) = toLogStr vid
+                            <> maybe mempty (("@" <>) . toLogStr . show) vtime
+
+logVideo :: TimedFastLogger -> Video -> IO ()
+logVideo logger video = logger $ \time -> toLogStr time
+                                       <> " VID "
+                                       <> toLogStr video
+                                       <> "\n"
+
 type MTAPI = "watch" :> ReqBody '[JSON] Video :> Post '[JSON] Video
 
 type MTAPP = MTAPI
@@ -51,12 +63,12 @@ type MTAPP = MTAPI
         :<|> "gen" :> Raw
         :<|> Get '[HTML] (Html ())
 
-mtAPIServer :: IORef Video -> Server MTAPI
-mtAPIServer ref = getVideo ref
+mtAPIServer :: TimedFastLogger -> IORef Video -> Server MTAPI
+mtAPIServer log ref = getVideo log ref
 
-mtAPPServer :: FilePath -> FilePath -> IORef Video -> Server MTAPP
-mtAPPServer staticDir tmpDir ref =
-       mtAPIServer ref
+mtAPPServer :: FilePath -> FilePath -> TimedFastLogger -> IORef Video -> Server MTAPP
+mtAPPServer staticDir tmpDir logger ref =
+       mtAPIServer logger ref
   :<|> serveDirectoryWebApp staticDir
   :<|> serveDirectoryWebApp tmpDir
   :<|> return indexPage
@@ -70,8 +82,10 @@ checkVideo (Video vidid time) = idOK && timeOK
         timeOK = case time of Nothing -> True
                               Just time' -> time' >= 0
 
-getVideo :: IORef Video -> Video -> Handler Video
-getVideo ref newVid = if checkVideo newVid
-  then liftIO $ atomicModifyIORef' ref (\oldVid -> (newVid, oldVid))
+getVideo :: TimedFastLogger -> IORef Video -> Video -> Handler Video
+getVideo logger ref newVid = if checkVideo newVid
+  then liftIO $ do
+    logVideo logger newVid
+    atomicModifyIORef' ref (\oldVid -> (newVid, oldVid))
   else throwError err400
 

@@ -8,6 +8,8 @@ import System.FilePath ((</>))
 import System.IO.Temp (withSystemTempDirectory)
 import Data.Maybe (fromMaybe)
 import Data.String (fromString)
+import System.Log.FastLogger (TimedFastLogger, withTimedFastLogger, LogType(LogStdout), defaultBufSize)
+import System.Log.FastLogger.Date (newTimeCache, simpleTimeFormat)
 
 import Paths_mysterytube
 import MTApp
@@ -28,7 +30,7 @@ tmpDirEnv :: String
 tmpDirEnv = "MYSTERYTUBE_TMP_DIR"
 
 main :: IO ()
-main = withSystemTempDirectory "mysterytube-" $ \tmpDir -> do
+main = setup $ \tmpDir logger -> do
   envPort <- lookupEnv portEnv
   envHost <- lookupEnv hostEnv
   let port = fromMaybe defaultPort $ read <$> envPort
@@ -42,7 +44,14 @@ main = withSystemTempDirectory "mysterytube-" $ \tmpDir -> do
 
   writeJSFiles tmpDir'
   ref <- newIORef Video { videoId = defaultVideoId, videoTime = Nothing }
-  runSettings (setPort port $ setHost host defaultSettings) $ mtApp staticDir' tmpDir' ref
+  runSettings (setPort port $ setHost host defaultSettings) $ mtApp staticDir' tmpDir' logger ref
+
+setup :: (FilePath -> TimedFastLogger -> IO ()) -> IO ()
+setup f = do
+  timeCache <- newTimeCache simpleTimeFormat
+  withSystemTempDirectory "mysterytube-" $
+    \tmpDir -> withTimedFastLogger timeCache (LogStdout defaultBufSize) $
+      \logger -> f tmpDir logger
 
 writeJSFiles :: FilePath -> IO ()
 writeJSFiles staticDir = --do
