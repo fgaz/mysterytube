@@ -21,7 +21,7 @@ executable mysterytube
                        MTApp
                        Index
   -- other-extensions:    
-  build-depends:       base >=4.8 && <4.11
+  build-depends:       base >=4.8 && <4.12
                      , warp
                      , wai
                      , servant
