@@ -1,0 +1,61 @@
+---
+{
+   "kind": "pipeline",
+   "name": "8",
+   "steps": [
+      {
+         "commands": [
+            "cabal new-update || cabal update",
+            "cabal new-build all"
+         ],
+         "image": "haskell:8",
+         "name": "test"
+      }
+   ]
+}
+---
+{
+   "kind": "pipeline",
+   "name": "8.2",
+   "steps": [
+      {
+         "commands": [
+            "cabal new-update || cabal update",
+            "cabal new-build all"
+         ],
+         "image": "haskell:8.2",
+         "name": "test"
+      }
+   ]
+}
+---
+{
+   "kind": "pipeline",
+   "name": "8.4",
+   "steps": [
+      {
+         "commands": [
+            "cabal new-update || cabal update",
+            "cabal new-build all"
+         ],
+         "image": "haskell:8.4",
+         "name": "test"
+      }
+   ]
+}
+---
+{
+   "kind": "pipeline",
+   "name": "8.6",
+   "steps": [
+      {
+         "commands": [
+            "cabal new-update || cabal update",
+            "cabal new-build all"
+         ],
+         "image": "haskell:8.6",
+         "name": "test"
+      }
+   ]
+}
+...
