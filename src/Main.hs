@@ -8,7 +8,7 @@ import System.FilePath ((</>))
 import System.IO.Temp (withSystemTempDirectory)
 import Data.Maybe (fromMaybe)
 import Data.String (fromString)
-import System.Log.FastLogger (TimedFastLogger, withTimedFastLogger, LogType(LogStdout), defaultBufSize)
+import System.Log.FastLogger (TimedFastLogger, withTimedFastLogger, LogType'(LogStdout), defaultBufSize)
 import System.Log.FastLogger.Date (newTimeCache, simpleTimeFormat)
 
 import Paths_mysterytube
