@@ -1,6 +1,6 @@
 # mysterytube
 
-[![Build Status](https://cloud.drone.io/api/badges/fgaz/mysterytube/status.svg)](https://cloud.drone.io/fgaz/mysterytube)
+[![builds.sr.ht status](https://builds.sr.ht/~fgaz/mysterytube/commits.svg)](https://builds.sr.ht/~fgaz/mysterytube/commits?)
 
 Live at http://mysterytube.stream
 
