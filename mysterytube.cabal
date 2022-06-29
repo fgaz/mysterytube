@@ -14,13 +14,7 @@ cabal-version:       >=1.10
 data-files:          static/*.js
                      static/*.css
                      static/*.png
-tested-with:         GHC==7.10.3
-                   , GHC==8.0.2
-                   , GHC==8.2.2
-                   , GHC==8.4.2
-                   , GHC==8.6.1
-                   , GHC==8.8.1
-                   , GHC==8.10.7
+tested-with:         GHC==8.10.7
                    , GHC==9.0.2
                    , GHC==9.2.2
 
@@ -30,7 +24,7 @@ executable mysterytube
                        MTApp
                        Index
   -- other-extensions:    
-  build-depends:       base >=4.8 && <4.17
+  build-depends:       base >=4.14 && <4.17
                      , warp
                      , wai
                      , servant
