@@ -1,16 +1,19 @@
+cabal-version:       2.2
 name:                mysterytube
 version:             0.1.0.0
 synopsis:            Paste a youtube URL and get the video that the previous user put
--- description:         
-license:             BSD3
+description:
+  A website with a single textbox where a youtube url can be pasted.
+  When confirming, the video id will be stored for the next visitor and the
+  video selected by the _previous_ visitor will play. Mystery!
+license:             BSD-3-Clause
 license-file:        LICENSE
 author:              Francesco Gazzetta
-maintainer:          francygazz@gmail.com
-copyright:           2017 Francesco Gazzetta
+maintainer:          fgaz@fgaz.me
+copyright:           2017-2022 Francesco Gazzetta
 category:            Web
 build-type:          Simple
 extra-source-files:  ChangeLog.md
-cabal-version:       >=1.10
 data-files:          static/*.js
                      static/*.css
                      static/*.png
@@ -18,8 +21,13 @@ tested-with:         GHC==8.10.7
                    , GHC==9.0.2
                    , GHC==9.2.2
 
+source-repository head
+  type:                git
+  location:            https://github.com/fgaz/mysterytube.git
+
 executable mysterytube
   main-is:             Main.hs
+  autogen-modules:     Paths_mysterytube
   other-modules:       Paths_mysterytube
                        MTApp
                        Index
