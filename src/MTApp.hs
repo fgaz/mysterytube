@@ -8,16 +8,12 @@
 
 module MTApp where
 
-import Control.Monad.Except
-import Data.Aeson.Types
-import GHC.Generics
-import Network.Wai
+import Control.Monad.IO.Class (liftIO)
+import Data.Aeson (FromJSON, ToJSON)
+import GHC.Generics (Generic)
 import Servant
-import Data.Text as T
-import Data.Text.IO as T
 import Servant.HTML.Lucid
 import Data.Char (isDigit, isAsciiLower, isAsciiUpper)
-import System.FilePath ((</>))
 import System.Log.FastLogger (ToLogStr, toLogStr, TimedFastLogger)
 import Data.Monoid
 

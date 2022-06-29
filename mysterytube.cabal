@@ -14,6 +14,15 @@ cabal-version:       >=1.10
 data-files:          static/*.js
                      static/*.css
                      static/*.png
+tested-with:         GHC==7.10.3
+                   , GHC==8.0.2
+                   , GHC==8.2.2
+                   , GHC==8.4.2
+                   , GHC==8.6.1
+                   , GHC==8.8.1
+                   , GHC==8.10.7
+                   , GHC==9.0.2
+                   , GHC==9.2.2
 
 executable mysterytube
   main-is:             Main.hs
@@ -21,7 +30,7 @@ executable mysterytube
                        MTApp
                        Index
   -- other-extensions:    
-  build-depends:       base >=4.8 && <4.15
+  build-depends:       base >=4.8 && <4.17
                      , warp
                      , wai
                      , servant
@@ -37,4 +46,5 @@ executable mysterytube
                      , temporary
                      , fast-logger >=3.0 && <3.1
   hs-source-dirs:      src
+  ghc-options:         -Wall
   default-language:    Haskell2010
