@@ -6,7 +6,7 @@ description:
   A website with a single textbox where a youtube url can be pasted.
   When confirming, the video id will be stored for the next visitor and the
   video selected by the _previous_ visitor will play. Mystery!
-license:             BSD-3-Clause
+license:             EUPL-1.2
 license-file:        LICENSE
 author:              Francesco Gazzetta
 maintainer:          fgaz@fgaz.me
